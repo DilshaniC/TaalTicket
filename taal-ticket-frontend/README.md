@@ -6,6 +6,7 @@ Install an emulator (android or ios), then to run the app:
 
 ```bash
 flutter pub get
+flutter pub run build_runner build
 flutter run
 ```
 

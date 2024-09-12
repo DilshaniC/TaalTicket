@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:rive_animation/screens/onboding/components/sign_in_form.dart';
+import 'package:rive_animation/screens/register/register_screen.dart';
 
 Future<Object?> customSigninDialog(BuildContext context,
     {required ValueChanged onClosed}) {
@@ -64,7 +65,7 @@ Future<Object?> customSigninDialog(BuildContext context,
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: Text("Sign up with Email, Apple or Google",
+                        child: Text("Sign up with Email, or Google",
                             style: TextStyle(color: Colors.black54)),
                       ),
                       Row(
@@ -72,17 +73,11 @@ Future<Object?> customSigninDialog(BuildContext context,
                         children: [
                           IconButton(
                               padding: EdgeInsets.zero,
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterScreen()),);
+                              },
                               icon: SvgPicture.asset(
                                 "assets/icons/email_box.svg",
-                                height: 64,
-                                width: 64,
-                              )),
-                          IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {},
-                              icon: SvgPicture.asset(
-                                "assets/icons/apple_box.svg",
                                 height: 64,
                                 width: 64,
                               )),

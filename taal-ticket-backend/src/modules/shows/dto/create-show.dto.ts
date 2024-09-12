@@ -29,6 +29,9 @@ export class CreateShowDto {
   description: string;
 
   @ApiProperty({ required: true })
+  image: string;
+
+  @ApiProperty({ required: true })
   venues: Array<VenueDto>;
 
   @ApiProperty({ required: true })
@@ -44,6 +47,9 @@ export class UpdateShowDto {
 
   @ApiProperty({ required: true })
   description: string;
+
+  @ApiProperty({ required: true })
+  image: string;
 
   @ApiProperty({ required: true })
   venues: Array<VenueDto>;

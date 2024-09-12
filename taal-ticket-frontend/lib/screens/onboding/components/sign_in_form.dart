@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rive/rive.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 import 'package:rive_animation/communicators/user.dart';
+import 'package:rive_animation/screens/admin/admin_screen.dart';
 import 'package:rive_animation/screens/main/main_screen.dart';
+import 'package:rive_animation/user_session.dart'; // Import the UserSession
 
 class SignInForm extends StatefulWidget {
   const SignInForm({
@@ -41,17 +40,23 @@ class _SignInFormState extends State<SignInForm> {
 
   StateMachineController getRiveController(Artboard artboard) {
     StateMachineController? controller =
-        StateMachineController.fromArtboard(artboard, "State Machine 1");
+    StateMachineController.fromArtboard(artboard, "State Machine 1");
     artboard.addController(controller!);
     return controller;
   }
 
-  void goHome(BuildContext context){
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const MainScreen()),
-    // );
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()),);
+  void goHome(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainScreen()),
+    );
+  }
+
+  void goAdminHome(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const AdminScreen()),
+    );
   }
 
   void signIn(BuildContext context) async {
@@ -64,8 +69,11 @@ class _SignInFormState extends State<SignInForm> {
         try {
           User user = await User.createUser(
               usernameController.text, passwordController.text);
-          print(user);
           if (user.accessToken != "") {
+            // Save user data to the singleton
+            UserSession().userId = user.userId;
+            UserSession().accessToken = user.accessToken;
+
             // show success
             check.fire();
             Future.delayed(const Duration(seconds: 2), () {
@@ -73,7 +81,11 @@ class _SignInFormState extends State<SignInForm> {
                 isShowLoading = false;
               });
               confetti.fire();
-              goHome(context);
+              if(user.role=="admin") {
+                goAdminHome(context);
+              } else {
+                goHome(context);
+              }
             });
           } else {
             error.fire();
@@ -118,6 +130,8 @@ class _SignInFormState extends State<SignInForm> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, bottom: 16),
                   child: TextFormField(
+                    autofocus: true,
+                    textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "";
@@ -128,9 +142,9 @@ class _SignInFormState extends State<SignInForm> {
                     onSaved: (username) {},
                     decoration: InputDecoration(
                         prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: SvgPicture.asset("assets/icons/email.svg"),
-                    )),
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: SvgPicture.asset("assets/icons/email.svg"),
+                        )),
                   ),
                 ),
                 const Text(
@@ -151,9 +165,12 @@ class _SignInFormState extends State<SignInForm> {
                     obscureText: true,
                     decoration: InputDecoration(
                         prefixIcon: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: SvgPicture.asset("assets/icons/password.svg"),
-                    )),
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: SvgPicture.asset("assets/icons/password.svg"),
+                        )),
+                    onFieldSubmitted: (value) {
+                      signIn(context);
+                    },
                   ),
                 ),
                 Padding(
@@ -181,31 +198,31 @@ class _SignInFormState extends State<SignInForm> {
             )),
         isShowLoading
             ? CustomPositioned(
-                child: RiveAnimation.asset(
-                "assets/RiveAssets/check.riv",
-                onInit: (artboard) {
-                  StateMachineController controller =
-                      getRiveController(artboard);
-                  check = controller.findSMI("Check") as SMITrigger;
-                  error = controller.findSMI("Error") as SMITrigger;
-                  reset = controller.findSMI("Reset") as SMITrigger;
-                },
-              ))
+            child: RiveAnimation.asset(
+              "assets/RiveAssets/check.riv",
+              onInit: (artboard) {
+                StateMachineController controller =
+                getRiveController(artboard);
+                check = controller.findSMI("Check") as SMITrigger;
+                error = controller.findSMI("Error") as SMITrigger;
+                reset = controller.findSMI("Reset") as SMITrigger;
+              },
+            ))
             : const SizedBox(),
         isShowConfetti
             ? CustomPositioned(
-                child: Transform.scale(
-                scale: 6,
-                child: RiveAnimation.asset(
-                  "assets/RiveAssets/confetti.riv",
-                  onInit: (artboard) {
-                    StateMachineController controller =
-                        getRiveController(artboard);
-                    confetti =
-                        controller.findSMI("Trigger explosion") as SMITrigger;
-                  },
-                ),
-              ))
+            child: Transform.scale(
+              scale: 6,
+              child: RiveAnimation.asset(
+                "assets/RiveAssets/confetti.riv",
+                onInit: (artboard) {
+                  StateMachineController controller =
+                  getRiveController(artboard);
+                  confetti =
+                  controller.findSMI("Trigger explosion") as SMITrigger;
+                },
+              ),
+            ))
             : const SizedBox()
       ],
     );

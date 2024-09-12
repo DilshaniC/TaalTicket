@@ -14,7 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
     @Inject('winston')
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   /*
    * Validates whether user exists in the system
@@ -28,7 +28,7 @@ export class AuthService {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, userName, ...rest } = user;
       console.log(`User: '${userName}' logged in at '${new Date().toUTCString()}'`);
-      
+
       return rest;
     }
     return null;
@@ -42,7 +42,9 @@ export class AuthService {
   async login(user: any) {
     const payload = { name: user.name, roles: user.roles, sub: user.id };
     return {
+      userId: payload.sub,
       name: user.name.split(' ')[0],
+      role: payload.roles[0],
       access_token: this.jwtService.sign(payload, {
         secret: process.env.JWT_PASS,
       }),
@@ -127,6 +129,15 @@ export class AuthService {
         roles: user.roles,
       };
     });
+  }
+
+
+  async viewUser(id: string): Promise<any> {
+    return this.userService.viewUser(id);
+  }
+
+  async updateUser(id, fname, lname, email, birthdate) {
+    return this.userService.updateUser(id, fname, lname, email, birthdate)
   }
 
   /*

@@ -28,6 +28,7 @@ export class ShowsService {
   async addNewShow(
     name: string,
     description: string,
+    image:string,
     venues: Array<VenueI>,
     tickets: Array<TicketI>,
     artists: Array<string>
@@ -36,6 +37,7 @@ export class ShowsService {
       _id: null,
       name,
       description,
+      image,
       venues,
       tickets,
       artists
@@ -48,8 +50,15 @@ export class ShowsService {
    * Selects all entries from show document
    * @return {[Promise<ShowEntity[]>]} [Returns all records from show document]
    */
-  async viewAllShows(): Promise<Show[]> {
-    return this.showModel.find().exec();
+  async viewAllShows(): Promise<any> {
+    const allShows = await this.showModel.find().exec();
+    return { "allShows": allShows};
+  }
+
+
+  async viewShow(id): Promise<any> {
+    const show = await this.showModel.findById(id);
+    return show;
   }
 
   /*
@@ -71,6 +80,7 @@ export class ShowsService {
     id: string,
     name: string,
     description: string,
+    image: string,
     venues: Array<VenueI>,
     tickets: Array<TicketI>,
     artists: Array<string>
@@ -79,6 +89,7 @@ export class ShowsService {
       return this.showModel.findByIdAndUpdate(id, {
         name,
         description,
+        image,
         venues,
         tickets,
         artists

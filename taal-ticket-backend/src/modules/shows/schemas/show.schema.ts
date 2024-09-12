@@ -17,10 +17,16 @@ export class Show {
   description: string;
 
   @Prop()
+  image: string;
+
+  @Prop()
   venues: Array<VenueI>;
 
   @Prop()
   tickets: Array<TicketI>;
+
+  @Prop()
+  artists: Array<string>;
 }
 
 export const ShowSchema = SchemaFactory.createForClass(Show);

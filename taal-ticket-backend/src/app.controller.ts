@@ -6,6 +6,8 @@ import {
   HttpException,
   HttpStatus,
   Get,
+  Param,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from './modules/auth/auth.service';
 import { LocalAuthGuard } from './modules/auth/local-auth-guard';
@@ -16,7 +18,7 @@ import { AllowedRoles } from './modules/users/roles.decorator';
 import { Role } from './modules/users/enum/role.enum';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { RolesGuard } from './modules/users/roles.guard';
-import { CreateUserDto } from './modules/users/dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './modules/users/dto/create-user.dto';
 
 @Controller()
 export class AppController {
@@ -56,6 +58,8 @@ export class AppController {
     }
   }
 
+  
+
   // Change password to a new one
   @ApiBearerAuth('JWT')
   @Post('resetPassword')
@@ -79,5 +83,26 @@ export class AppController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   viewAllUsers(): any {
     return this.authService.viewAllUsers();
+  }
+
+  @Get('viewUser/:id')
+  viewUser(@Param("id") id: string): any {
+    return this.authService.viewUser(id);
+  }
+
+  @Put('update/:id')
+  // @AllowedRoles(Role.ADMIN, Role.DIRECTOR)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  updateShow(
+    @Param('id') id: string,
+    @Body() req: UpdateUserDto,
+  ): Promise<any> {
+    return this.authService.updateUser(
+      id,
+      req.firstname,
+      req.lastname,
+      req.email,
+      req.birthdate
+    );
   }
 }

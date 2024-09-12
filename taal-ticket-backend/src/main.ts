@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as bodyParser from 'body-parser';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cors = require('cors');
@@ -35,6 +36,9 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/', app, document);
+
+  app.use(bodyParser.json({ limit: '100mb' }));
+  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
   // Start Listening
   await app.listen(parseInt(process.env.BACKEND_PORT));

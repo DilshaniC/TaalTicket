@@ -22,3 +22,17 @@ export class CreateUserDto {
   @ApiProperty({default: new Date()})
   birthdate: Date;
 }
+
+export class UpdateUserDto {
+  @ApiProperty({ required: true })
+  firstname: string;
+
+  @ApiProperty({ required: true })
+  lastname: string;
+
+  @ApiProperty({ required: true })
+  email: string;
+
+  @ApiProperty({default: new Date()})
+  birthdate: Date;
+}

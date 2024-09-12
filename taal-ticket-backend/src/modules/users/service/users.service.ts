@@ -14,13 +14,13 @@ import { CreateUserDto } from '../dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  
+
   constructor(
-    @InjectModel(User.name) 
+    @InjectModel(User.name)
     private userModel: Model<User>,
     @Inject('winston')
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   /*
    * Inserts new entry to user document
@@ -47,6 +47,24 @@ export class UsersService {
    */
   async findOne(userName: string): Promise<UserI | undefined> {
     return this.userModel.findOne({ userName });
+  }
+
+  async viewUser(id: string): Promise<any> {
+    const user = await this.userModel.findById(id);
+    if (user) {
+      return {
+        "firstname": user.firstName,
+        "lastname": user.lastName,
+        "email":user.email,
+        "birthdate": user.birthdate
+      }
+    } else {
+      return undefined;
+    }
+  }
+
+  async updateUser(id, fname, lname, email, birthdate){
+    return this.userModel.findByIdAndUpdate(id, {firstName:fname, lastName:lname, email:email, birthdate:birthdate, userName:email})
   }
 
   /*

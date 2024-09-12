@@ -5,6 +5,7 @@ export class ShowI {
   _id: string;
   name: string;
   description: string;
+  image: string;
   venues: Array<VenueI>;
   tickets: Array<TicketI>;
   artists: Array<string>;
